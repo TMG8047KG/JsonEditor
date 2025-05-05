@@ -22,18 +22,15 @@ th, td {
   
 .container{
     border: 1px solid black;
-    border-radius: 20px;
-    width: 50%;
-    padding: 40px;
+    border-radius: 15px;
+    padding: 20px;
     background-color: #bfd1e5;
-    max-width: 90vw;
-    max-height: 90vh;
     overflow: auto;
 
 }
 .button{
     background-color: #bd889a;
-    color: white;
+    color: #06140f;
     border: none;
     padding: 10px 20px;
     text-align: center;

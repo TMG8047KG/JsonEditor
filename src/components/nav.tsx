@@ -26,11 +26,17 @@ function navbar(){
 
     return(
         <div className={style.container} data-tauri-drag-region>
-            <h1 className={style.title}>JsonEditor</h1>
-            <div>
-                <button className={style.button} onClick={handleMaximize}>☐</button>
-                <button className={style.button} onClick={handleMinimize}>_</button>
-                <button className={style.button} onClick={handleClose}>X</button>
+            <h1 className={style.title} data-tauri-drag-region>logo</h1>
+            <div className={style.buttons}>
+                <button className={style.button} onClick={handleMinimize}>
+                    <img src='src\assets\minimize.png' width='24'/>
+                </button>
+                <button className={style.button} onClick={handleMaximize}>
+                    <img src='src\assets\maximize.png' width='24'/>
+                </button>
+                <button className={style.button} onClick={handleClose}>
+                    <img src='src\assets\close.png' width='24'/>
+                </button>
             </div>
             
         </div>

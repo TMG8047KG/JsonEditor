@@ -2,5 +2,20 @@
     display: flex;
     padding: 5px;
     justify-content: space-between;
-    background-color: blue;
+    background-color: #bfd1e5;
+}
+
+.buttons{
+    display: flex;
+    gap:5px;
+}
+
+.button{
+    display: flex;
+    height: 30px;
+    width: 30px;
+    border: none;
+    justify-content: center;
+    align-items: center;
+    background:  none;
 }

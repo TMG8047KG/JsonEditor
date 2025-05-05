@@ -19,8 +19,8 @@ function controls() {
         console.log(file);
     }
     return(
-        <div>
-            <button onClick={openFile}>Open File</button>
+        <div className={styles.buttons}>
+            <button className={styles.button} onClick={openFile}>Open File</button>
             <button className={styles.button}>Add Row</button>
             <button className={styles.button}>Remove Row</button>
             <button className={styles.button}>Clear Table</button>
