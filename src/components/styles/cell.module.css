@@ -4,11 +4,14 @@
     font-weight: 700;
     background: #90ADC6;
     padding: 5px 10px;
-    border-radius: 10px 0px 0px 10px;
+    border-radius: 10px;
     min-width: 3rem;
-    border-left: 2px solid black;
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
+    border: 2px solid black;
+}
+
+.content:has(.value) .key {
+    border-radius: 10px 0px 0px 10px;
+    border-right: none;
 }
 
 .key:focus{
@@ -33,4 +36,33 @@
 
 .content{
     display: flex;
+    align-items: center;
+    margin: 3px 0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.content.selected .key {
+    border-color: #FAD02C;
+    box-shadow: 0 0 3px #FAD02C;
+}
+
+.content.selected .value {
+    border-color: #FAD02C;
+    box-shadow: 0 0 3px #FAD02C;
+}
+
+.expandButton {
+    margin-left: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    background: #FAD02C;
+    border: none;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
 }

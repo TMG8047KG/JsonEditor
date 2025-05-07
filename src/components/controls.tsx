@@ -7,9 +7,19 @@ interface ControlsProps {
   onAddRow: () => void;
   onRemoveRow: () => void;
   onClearTable: () => void;
+  onAddNestedRow: () => void;
+  onRemoveSelectedRow: () => void;
+  hasSelectedRow: boolean;
 }
 
-function Controls({ onAddRow, onRemoveRow, onClearTable }: ControlsProps) {
+function Controls({ 
+  onAddRow, 
+  onRemoveRow, 
+  onClearTable,
+  onAddNestedRow,
+  onRemoveSelectedRow,
+  hasSelectedRow
+}: ControlsProps) {
   const openFile = async () => {
     try {
       const selected = await open({
@@ -63,7 +73,17 @@ function Controls({ onAddRow, onRemoveRow, onClearTable }: ControlsProps) {
     <div className={styles.buttons}>
       <button className={styles.button} onClick={openFile}>Open File</button>
       <button className={styles.button} onClick={onAddRow}>Add Row</button>
-      <button className={styles.button} onClick={onRemoveRow}>Remove Row</button>
+      {hasSelectedRow && (
+        <button className={styles.button} onClick={onAddNestedRow}>
+          Add Nested Row
+        </button>
+      )}
+      <button 
+        className={styles.button} 
+        onClick={hasSelectedRow ? onRemoveSelectedRow : onRemoveRow}
+      >
+        {hasSelectedRow ? 'Remove Selected' : 'Remove Row'}
+      </button>
       <button className={styles.button} onClick={onClearTable}>Clear Table</button>
       <button className={styles.button} onClick={saveFile}>Save File</button>
     </div>

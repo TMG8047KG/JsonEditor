@@ -5,6 +5,7 @@ import Controls from "./controls";
 
 function Editor() {
   const [projectStarted, setProjectStarted] = useState(false);
+  const [hasSelectedRow, setHasSelectedRow] = useState(false);
   const tableRef = useRef<TableHandle>(null);
 
   const createProject = () => {
@@ -22,6 +23,21 @@ function Editor() {
 
   const handleClearTable = () => {
     tableRef.current?.clearTable();
+    setHasSelectedRow(false);
+  }
+
+  const handleAddNestedRow = () => {
+    tableRef.current?.addNestedRow();
+  }
+
+  const handleRemoveSelectedRow = () => {
+    tableRef.current?.removeSelectedRow();
+    setHasSelectedRow(false);
+  }
+
+  // Handle row selection change
+  const handleSelectionChange = (selected: boolean) => {
+    setHasSelectedRow(selected);
   }
 
   return (
@@ -31,9 +47,23 @@ function Editor() {
           <button className={styles.button} onClick={createProject}>
             Create project
           </button>
-        ) : (<Table ref={tableRef}/>)}
+        ) : (
+          <Table 
+            ref={tableRef} 
+            onSelectionChange={handleSelectionChange}
+          />
+        )}
       </div>
-      {!projectStarted ? "" : <Controls onAddRow={handleAddRow} onRemoveRow={handleRemoveRow} onClearTable={handleClearTable}/>}
+      {!projectStarted ? "" : (
+        <Controls 
+          onAddRow={handleAddRow} 
+          onRemoveRow={handleRemoveRow} 
+          onClearTable={handleClearTable}
+          onAddNestedRow={handleAddNestedRow}
+          onRemoveSelectedRow={handleRemoveSelectedRow}
+          hasSelectedRow={hasSelectedRow}
+        />
+      )}
     </div>
   )
 }
