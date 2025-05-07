@@ -1,6 +1,6 @@
-import { documentDir } from '@tauri-apps/api/path';
+import { BaseDirectory, documentDir } from '@tauri-apps/api/path';
 import { open, save } from '@tauri-apps/plugin-dialog';
-import { writeTextFile } from '@tauri-apps/plugin-fs';
+import { writeTextFile, readTextFile } from '@tauri-apps/plugin-fs';
 import styles from './styles/controls.module.css';
 
 interface ControlsProps {
@@ -10,6 +10,8 @@ interface ControlsProps {
   onAddNestedRow: () => void;
   onRemoveSelectedRow: () => void;
   hasSelectedRow: boolean;
+  onLoadData: (data: any) => void;
+  onGetData: () => any;
 }
 
 function Controls({ 
@@ -18,30 +20,46 @@ function Controls({
   onClearTable,
   onAddNestedRow,
   onRemoveSelectedRow,
-  hasSelectedRow
+  hasSelectedRow,
+  onLoadData,
+  onGetData
 }: ControlsProps) {
   const openFile = async () => {
     try {
       const selected = await open({
         multiple: false,
         directory: false,
-        title: "Select Json File",
+        title: "Select JSON File",
         defaultPath: await documentDir(),
         filters: [
           {
-            name: "Json file",
+            name: "JSON file",
             extensions: ['json']
           }
         ]
       });
       
-      if (selected) {
+      if (selected && !Array.isArray(selected)) {
         console.log("Selected file:", selected);
-        // Here you would implement loading the JSON into the table
-        // You would need to add a loadData method to the TableHandle
+        
+        try {
+          // Read the file content
+          const content = await readTextFile(selected);
+          
+          // Parse the JSON
+          const jsonData = JSON.parse(content);
+          
+          // Load the data into the table
+          onLoadData(jsonData);
+        } catch (parseError) {
+          console.error("Error parsing JSON file:", parseError);
+          // You could add a user-facing error message here
+          alert("Error parsing JSON file. Please make sure it's valid JSON.");
+        }
       }
     } catch (error) {
       console.error("Error opening file:", error);
+      alert("Error opening file. Please try again.");
     }
   };
 
@@ -51,21 +69,27 @@ function Controls({
         defaultPath: await documentDir(),
         filters: [
           {
-            name: "Json file",
+            name: "JSON file",
             extensions: ['json']
           }
         ]
       });
+      console.log(filePath);
       
       if (filePath) {
-        // Here you would implement getting the data from the table
-        // and saving it to the file
-        const dummyData = JSON.stringify({ sample: "data" }, null, 2);
-        await writeTextFile(filePath, dummyData);
+        // Get the data from the table
+        const data = onGetData();
+        
+        // Convert to JSON string with nice formatting
+        const jsonString = JSON.stringify(data, null, 2);
+        
+        // Write to file
+        await writeTextFile(filePath, jsonString);
         console.log("File saved at:", filePath);
       }
     } catch (error) {
       console.error("Error saving file:", error);
+      alert("Error saving file. Please try again.");
     }
   };
 

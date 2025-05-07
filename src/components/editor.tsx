@@ -40,6 +40,15 @@ function Editor() {
     setHasSelectedRow(selected);
   }
 
+  // Handle file operations
+  const handleLoadData = (data: any) => {
+    tableRef.current?.loadData(data);
+  }
+
+  const handleGetData = () => {
+    return tableRef.current?.getData() || {};
+  }
+
   return (
     <div className={styles.bg}>
       <div className={styles.container}>
@@ -62,6 +71,8 @@ function Editor() {
           onAddNestedRow={handleAddNestedRow}
           onRemoveSelectedRow={handleRemoveSelectedRow}
           hasSelectedRow={hasSelectedRow}
+          onLoadData={handleLoadData}
+          onGetData={handleGetData}
         />
       )}
     </div>

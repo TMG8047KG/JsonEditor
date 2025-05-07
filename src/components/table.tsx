@@ -1,4 +1,4 @@
-import { useState, useRef, useImperativeHandle, forwardRef } from "react";
+import { useState, useRef, useImperativeHandle, forwardRef, useEffect } from "react";
 import style from './styles/table.module.css'
 import Cell from "./cell";
 
@@ -9,6 +9,10 @@ export type TableHandle = {
   clearTable: () => void;
   addNestedRow: () => void;
   removeSelectedRow: () => void;
+  loadData: (data: any) => void;
+  getData: () => any;
+  updateCellKey: (id: string, value: string) => void;
+  updateCellValue: (id: string, value: string) => void;
 };
 
 // Define row types for better type safety
@@ -41,13 +45,16 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                 isSelected: row.id === id ? true : false
             }));
             
-            // Notify parent component about selection change
+            return updatedRows;
+        });
+        
+        // Notify parent component about selection change AFTER state update
+        // This avoids React's "Cannot update a component while rendering a different component" error
+        setTimeout(() => {
             if (onSelectionChange) {
                 onSelectionChange(true);
             }
-            
-            return updatedRows;
-        });
+        }, 0);
     };
 
     // Find selected row
@@ -74,6 +81,97 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
             }))
         );
     };
+
+    // Convert rows to JSON structure for saving
+    const rowsToJson = () => {
+        const result: any = {};
+        
+        // Process top-level rows first
+        const topLevelRows = getTopLevelRows();
+        
+        topLevelRows.forEach(row => {
+            // Check if this has children
+            const children = getChildRows(row.id);
+            
+            if (children.length > 0) {
+                // This is an object/array with nested values
+                if (row.key) {
+                    result[row.key] = processChildren(row.id);
+                }
+            } else {
+                // This is a simple key-value pair
+                if (row.key) {
+                    result[row.key] = row.value;
+                }
+            }
+        });
+        
+        return result;
+    };
+    
+    // Process children rows recursively
+    const processChildren = (parentId: string) => {
+        const children = getChildRows(parentId);
+        const result: any = {};
+        
+        children.forEach(child => {
+            const grandchildren = getChildRows(child.id);
+            
+            if (grandchildren.length > 0) {
+                // This child has its own children
+                if (child.key) {
+                    result[child.key] = processChildren(child.id);
+                }
+            } else {
+                // This is a leaf node
+                if (child.key) {
+                    result[child.key] = child.value;
+                }
+            }
+        });
+        
+        return result;
+    };
+    
+    // Convert JSON to rows structure
+    const jsonToRows = (json: any, parentId: string | null = null): TableRow[] => {
+        const newRows: TableRow[] = [];
+        
+        if (typeof json === 'object' && json !== null) {
+            // Handle object or array
+            Object.keys(json).forEach(key => {
+                const rowId = "row-" + Date.now() + Math.random().toString(36).substring(2, 9);
+                const value = json[key];
+                
+                if (typeof value === 'object' && value !== null) {
+                    // Create parent row
+                    newRows.push({
+                        id: rowId,
+                        key: key,
+                        value: [], // Placeholder for object/array
+                        isSelected: false,
+                        parentId: parentId,
+                        isExpanded: true
+                    });
+                    
+                    // Process children recursively
+                    const childRows = jsonToRows(value, rowId);
+                    newRows.push(...childRows);
+                } else {
+                    // Simple key-value
+                    newRows.push({
+                        id: rowId,
+                        key: key,
+                        value: value,
+                        isSelected: false,
+                        parentId: parentId
+                    });
+                }
+            });
+        }
+        
+        return newRows;
+    };
     
     // Expose methods to parent components
     useImperativeHandle(ref, () => ({
@@ -89,6 +187,20 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                 }
             ]);
         },
+        updateCellKey: (id: string, value: string) => {
+            setRows(prevRows => 
+                prevRows.map(row => 
+                    row.id === id ? { ...row, key: value } : row
+                )
+            );
+        },
+        updateCellValue: (id: string, value: string) => {
+            setRows(prevRows => 
+                prevRows.map(row => 
+                    row.id === id ? { ...row, value: value } : row
+                )
+            );
+        },
         removeRow: () => {
             if (rows.length > 0) {
                 // Remove the last top-level row
@@ -103,10 +215,12 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
         },
         clearTable: () => {
             setRows([]);
-            // Notify parent component about selection change
-            if (onSelectionChange) {
-                onSelectionChange(false);
-            }
+            // Notify parent component about selection change AFTER state update
+            setTimeout(() => {
+                if (onSelectionChange) {
+                    onSelectionChange(false);
+                }
+            }, 0);
         },
         addNestedRow: () => {
             const selectedRow = getSelectedRow();
@@ -151,11 +265,43 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                     row.id !== selectedRow.id && row.parentId !== selectedRow.id
                 ));
                 
-                // Notify parent component about selection change
+                // Notify parent component about selection change AFTER state update
+                setTimeout(() => {
+                    if (onSelectionChange) {
+                        onSelectionChange(false);
+                    }
+                }, 0);
+            }
+        },
+        // New methods for file operations
+        loadData: (data: any) => {
+            // Convert JSON data to rows
+            const newRows = jsonToRows(data);
+            
+            // Set the new rows
+            if (newRows.length > 0) {
+                setRows(newRows);
+            } else {
+                // If empty object, create at least one row
+                setRows([{ 
+                    id: "row-" + Date.now(), 
+                    key: "", 
+                    value: "", 
+                    isSelected: false, 
+                    parentId: null 
+                }]);
+            }
+            
+            // Reset selection AFTER state update
+            setTimeout(() => {
                 if (onSelectionChange) {
                     onSelectionChange(false);
                 }
-            }
+            }, 0);
+        },
+        getData: () => {
+            // Convert rows to JSON for saving
+            return rowsToJson();
         }
     }));
 
@@ -178,6 +324,27 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                         isExpandable={isArrayValue}
                         isExpanded={row.isExpanded}
                         onToggleExpand={() => toggleExpand(row.id)}
+                        onNameChange={(id, value) => {
+                            // Update row key directly
+                            setRows(prevRows => 
+                                prevRows.map(r => 
+                                    r.id === id ? { ...r, key: value } : r
+                                )
+                            );
+                        }}
+                        onValueChange={(id, value) => {
+                            // Convert to number if possible
+                            const parsedValue = !isNaN(Number(value)) && value !== '' 
+                                ? Number(value) 
+                                : value;
+                            
+                            // Update row value directly
+                            setRows(prevRows => 
+                                prevRows.map(r => 
+                                    r.id === id ? { ...r, value: parsedValue } : r
+                                )
+                            );
+                        }}
                     />
                     
                     {/* Render children if expanded and has children */}
