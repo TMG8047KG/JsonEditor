@@ -26,7 +26,8 @@ function navbar(){
 
     return(
         <div className={style.container} data-tauri-drag-region>
-            <h1 className={style.title} data-tauri-drag-region>logo</h1>
+            <h1 className={style.logo} data-tauri-drag-region>logo</h1>
+            <h1 className={style.title}>Json Editor</h1>
             <div className={style.buttons}>
                 <button className={style.button} onClick={handleMinimize}>
                     <img src='src\assets\minimize.png' width='24'/>

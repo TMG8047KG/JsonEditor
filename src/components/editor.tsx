@@ -1,27 +1,45 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from './styles/editor.module.css'
-import Table from "./table";
-import { createRoot } from "react-dom/client";
+import Table, { TableHandle } from "./table";
+import Controls from "./controls";
 
-function editor(){
-  const [project, setProject] = useState(false);
+function Editor() {
+  const [projectStarted, setProjectStarted] = useState(false);
+  const tableRef = useRef<TableHandle>(null);
 
   const createProject = () => {
-    setProject(true);
-    const con = document.getElementById("container");
-    if(con) {
-      const root = createRoot(con);
-      root.render(<Table/>);
-    }
+    setProjectStarted(true);
+  }
+
+  // Handle table operations
+  const handleAddRow = () => {
+    tableRef.current?.addRow();
+  }
+
+  const handleRemoveRow = () => {
+    tableRef.current?.removeRow();
+  }
+
+  const handleClearTable = () => {
+    tableRef.current?.clearTable();
   }
 
   return (
-      <div className={styles.wrapper}>
-      <div id="container" className={styles.container}>
-        {project != true ? <button className={styles.button} onClick={createProject}>Create project</button> : ""}
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
+        {!projectStarted ? (
+          <button className={styles.button} onClick={createProject}>
+            Create project
+          </button>
+        ) : (
+          <>
+            <Table ref={tableRef} />
+            <Controls onAddRow={handleAddRow} onRemoveRow={handleRemoveRow} onClearTable={handleClearTable}/>
+          </>
+        )}
       </div>
     </div>
   )
 }
 
-export default editor;
+export default Editor;
