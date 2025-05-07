@@ -28,7 +28,7 @@ const Table = forwardRef<TableHandle>((_, ref) => {
         addRow: () => {
             setRows(prevRows => [
                 ...prevRows, 
-                { id: "row-" + Date.now(), key: "key", value: "value" }
+                { id: "row-" + Date.now(), key: "", value: "" }
             ]);
         },
         removeRow: () => {
@@ -43,7 +43,7 @@ const Table = forwardRef<TableHandle>((_, ref) => {
 
     return (
         <div className={style.table} ref={tableRef}>
-            {rows.map(row => (
+            {rows.length < 1 ? "There's no objects!" : rows.map(row => (
                 <Cell key={row.id} name={row.key} val={row.value} />
             ))}
         </div>

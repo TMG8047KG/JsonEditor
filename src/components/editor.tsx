@@ -25,19 +25,15 @@ function Editor() {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.bg}>
       <div className={styles.container}>
         {!projectStarted ? (
           <button className={styles.button} onClick={createProject}>
             Create project
           </button>
-        ) : (
-          <>
-            <Table ref={tableRef} />
-            <Controls onAddRow={handleAddRow} onRemoveRow={handleRemoveRow} onClearTable={handleClearTable}/>
-          </>
-        )}
+        ) : (<Table ref={tableRef}/>)}
       </div>
+      {!projectStarted ? "" : <Controls onAddRow={handleAddRow} onRemoveRow={handleRemoveRow} onClearTable={handleClearTable}/>}
     </div>
   )
 }

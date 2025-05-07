@@ -2,6 +2,13 @@
     padding: 5px;
     font-family: "Tuffy", sans-serif;
     font-weight: 700;
+    background: #90ADC6;
+    padding: 5px 10px;
+    border-radius: 10px 0px 0px 10px;
+    min-width: 3rem;
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
 }
 
 .key:focus{
@@ -11,8 +18,19 @@
 .value{
     font-family: "Tuffy", sans-serif;
     font-weight: 500;
+    background: #E9EAEC;
+    padding: 5px 10px;
+    border-radius: 0px 10px 10px 0px;
+    min-width: 4rem;
+    border-right: 2px solid black;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
 }
 
 .value:focus{
     outline: none;
+}
+
+.content{
+    display: flex;
 }

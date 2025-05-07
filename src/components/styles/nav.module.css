@@ -1,12 +1,14 @@
 .container{
     display: flex;
-    padding: 5px;
+    padding: 0px 10px;
     justify-content: space-between;
-    background-color: #bfd1e5;
+    background-color: #90ADC6;
+    height: 50px;
 }
 
 .buttons{
     display: flex;
+    align-items: center;
     gap:5px;
 }
 
@@ -18,4 +20,15 @@
     justify-content: center;
     align-items: center;
     background:  none;
+}
+
+.title{
+    font-family: "Tuffy", sans-serif;
+    font-weight: 700;
+    text-align: center;
+}
+
+.logo {
+    min-height: 30px;
+    min-width: 30px;
 }
