@@ -40,6 +40,8 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
     const [maxOrder, setMaxOrder] = useState<number>(0);
     const [isKeyEditable, setIsKeyEditable] = useState<boolean>(true);
     const [isValueEditable, setIsValueEditable] = useState<boolean>(true);
+    const [searchKeyword, setSearchKeyword] = useState<string>("");
+    const [filteredRows, setFilteredRows] = useState<string[]>([]);
     
     const tableRef = useRef<HTMLDivElement>(null);
     
@@ -117,6 +119,46 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                 isExpanded: row.id === id ? !row.isExpanded : row.isExpanded
             }))
         );
+    };
+
+    // Handle search functionality
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const keyword = e.target.value.trim().toLowerCase();
+        setSearchKeyword(keyword);
+        
+        if (!keyword) {
+            setFilteredRows([]);
+            return;
+        }
+        
+        // Find matching rows
+        const matches = rows.filter(row => {
+            const keyMatch = row.key.toLowerCase().includes(keyword);
+            const valueMatch = typeof row.value === 'string' || typeof row.value === 'number' 
+                ? String(row.value).toLowerCase().includes(keyword)
+                : false;
+                
+            return keyMatch || valueMatch;
+        }).map(row => row.id);
+        
+        setFilteredRows(matches);
+        
+        // Auto-expand parent rows of matches
+        if (matches.length > 0) {
+            setRows(prevRows => {
+                return prevRows.map(row => {
+                    // If this row has children that match the search
+                    const hasMatchingChildren = rows.some(child => 
+                        child.parentId === row.id && matches.includes(child.id)
+                    );
+                    
+                    if (hasMatchingChildren) {
+                        return { ...row, isExpanded: true };
+                    }
+                    return row;
+                });
+            });
+        }
     };
 
     // Convert rows to JSON structure for saving
@@ -299,6 +341,8 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
         clearTable: () => {
             setRows([]);
             setMaxOrder(0);
+            setSearchKeyword(""); // Clear search when clearing table
+            setFilteredRows([]);
             // Notify parent component about selection change AFTER state update
             setTimeout(() => {
                 if (onSelectionChange) {
@@ -385,6 +429,10 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                 setMaxOrder(0);
             }
             
+            // Clear search when loading new data
+            setSearchKeyword("");
+            setFilteredRows([]);
+            
             // Reset selection AFTER state update
             setTimeout(() => {
                 if (onSelectionChange) {
@@ -413,9 +461,33 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
         return rowsToRender.map(row => {
             const hasChildren = rows.some(r => r.parentId === row.id);
             const isArrayValue = Array.isArray(row.value) || hasChildren;
+            const isHighlighted = searchKeyword && filteredRows.includes(row.id);
+            
+            // Skip rendering this branch if searching and there's no match in this branch
+            if (searchKeyword && filteredRows.length > 0) {
+                // Always render matching rows
+                if (!isHighlighted) {
+                    // For non-matching rows, check if any of their children match
+                    const hasMatchingDescendant = (rowId: string): boolean => {
+                        const directChildren = rows.filter(r => r.parentId === rowId);
+                        return directChildren.some(child => 
+                            filteredRows.includes(child.id) || hasMatchingDescendant(child.id)
+                        );
+                    };
+                    
+                    // Skip rendering this row if neither it nor its descendants match
+                    if (!hasMatchingDescendant(row.id) && parentId !== null) {
+                        return null;
+                    }
+                }
+            }
             
             return (
-                <div key={row.id} className={row.isSelected ? `${style.row} ${style.selected}` : style.row}>
+                <div key={row.id} className={
+                    `${style.row} 
+                     ${row.isSelected ? style.selected : ''} 
+                     ${isHighlighted ? style.highlight : ''}`
+                }>
                     <Cell 
                         id={row.id}
                         name={row.key} 
@@ -458,13 +530,52 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                     )}
                 </div>
             );
-        });
+        }).filter(Boolean); // Filter out null values
     };
+
+    // Effect to auto-expand parent rows when searching
+    useEffect(() => {
+        if (searchKeyword && filteredRows.length > 0) {
+            // Auto-expand all parents of matching rows
+            const expandParents = (rowId: string | null) => {
+                if (!rowId) return;
+                
+                const parentRow = rows.find(row => row.id === rowId);
+                if (parentRow && parentRow.parentId) {
+                    setRows(prevRows => 
+                        prevRows.map(row => 
+                            row.id === parentRow.parentId ? { ...row, isExpanded: true } : row
+                        )
+                    );
+                    expandParents(parentRow.parentId);
+                }
+            };
+            
+            // For each filtered row, expand its parents
+            filteredRows.forEach(rowId => {
+                const row = rows.find(r => r.id === rowId);
+                if (row && row.parentId) {
+                    expandParents(row.parentId);
+                }
+            });
+        }
+    }, [filteredRows, searchKeyword, rows]);
 
     return (
         <div className={style.table} ref={tableRef}>
-            <div>
-                <input placeholder="keyword" name="search"/>
+            <div className={style.searchContainer}>
+                <input 
+                    className={style.searchInput}
+                    placeholder="Search by key or value" 
+                    name="search"
+                    value={searchKeyword}
+                    onChange={handleSearch}
+                />
+                {searchKeyword && (
+                    <div className={style.searchStats}>
+                        {filteredRows.length} {filteredRows.length === 1 ? 'match' : 'matches'} found
+                    </div>
+                )}
             </div>
             {rows.length < 1 ? (
                 <div className={style.empty}>There's no objects!</div>
