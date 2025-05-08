@@ -35,6 +35,15 @@ function Editor() {
     setHasSelectedRow(false);
   }
 
+  // Toggle editability
+  const handleToggleKeyEditable = () => {
+    tableRef.current?.toggleKeyEditable();
+  }
+
+  const handleToggleValueEditable = () => {
+    tableRef.current?.toggleValueEditable();
+  }
+
   // Handle row selection change
   const handleSelectionChange = (selected: boolean) => {
     setHasSelectedRow(selected);
@@ -73,6 +82,8 @@ function Editor() {
           hasSelectedRow={hasSelectedRow}
           onLoadData={handleLoadData}
           onGetData={handleGetData}
+          onToggleKeyEditable={handleToggleKeyEditable}
+          onToggleValueEditable={handleToggleValueEditable}
         />
       )}
     </div>

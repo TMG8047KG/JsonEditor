@@ -12,6 +12,8 @@ interface CellProps {
     onToggleExpand?: () => void;
     onNameChange?: (id: string, value: string) => void;
     onValueChange?: (id: string, value: string) => void;
+    isKeyEditable?: boolean;  // Add prop to control key editing
+    isValueEditable?: boolean;  // Add prop to control value editing
 }
 
 function Cell({ 
@@ -24,7 +26,9 @@ function Cell({
     isExpanded = false,
     onToggleExpand,
     onNameChange,
-    onValueChange
+    onValueChange,
+    isKeyEditable = true,  // Default to editable for backward compatibility
+    isValueEditable = true  // Default to editable for backward compatibility
 }: CellProps) {
     
     const nameRef = useRef<HTMLSpanElement>(null);
@@ -32,13 +36,13 @@ function Cell({
     
     // Handle content changes directly with React events
     const handleNameBlur = () => {
-        if (onNameChange && nameRef.current) {
+        if (onNameChange && nameRef.current && isKeyEditable) {
             onNameChange(id, nameRef.current.textContent || '');
         }
     };
     
     const handleValueBlur = () => {
-        if (onValueChange && valueRef.current) {
+        if (onValueChange && valueRef.current && isValueEditable) {
             onValueChange(id, valueRef.current.textContent || '');
         }
     };
@@ -81,8 +85,8 @@ function Cell({
         >
             <span 
                 ref={nameRef}
-                contentEditable 
-                className={style.key}
+                contentEditable={isKeyEditable}
+                className={`${style.key} ${!isKeyEditable ? style.keyNotEditable : ''}`}
                 onKeyDown={handleKeyDown}
                 onBlur={handleNameBlur}
                 suppressContentEditableWarning={true}
@@ -94,8 +98,8 @@ function Cell({
             {!isExpandable && (
                 <span 
                     ref={valueRef}
-                    contentEditable 
-                    className={style.value}
+                    contentEditable={isValueEditable}
+                    className={`${style.value} ${!isValueEditable ? style.valueNotEditable : ''}`}
                     onKeyDown={handleKeyDown}
                     onBlur={handleValueBlur}
                     suppressContentEditableWarning={true}

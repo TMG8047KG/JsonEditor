@@ -66,3 +66,25 @@
     cursor: pointer;
     font-size: 16px;
 }
+.keyNotEditable {
+    padding: 5px;
+    font-family: "Tuffy", sans-serif;
+    font-weight: 700;
+    background: #b86a6a;
+    padding: 5px 10px;
+    border-radius: 10px;
+    min-width: 3rem;
+    border: 2px solid black;
+}
+
+.valueNotEditable {
+    font-family: "Tuffy", sans-serif;
+    font-weight: 500;
+    background: #395a9c;
+    padding: 5px 10px;
+    border-radius: 0px 10px 10px 0px;
+    min-width: 4rem;
+    border-right: 2px solid black;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}

@@ -1,6 +1,7 @@
 import { BaseDirectory, documentDir } from '@tauri-apps/api/path';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { writeTextFile, readTextFile } from '@tauri-apps/plugin-fs';
+import { useState } from 'react';
 import styles from './styles/controls.module.css';
 
 interface ControlsProps {
@@ -12,6 +13,8 @@ interface ControlsProps {
   hasSelectedRow: boolean;
   onLoadData: (data: any) => void;
   onGetData: () => any;
+  onToggleKeyEditable: () => void;
+  onToggleValueEditable: () => void;
 }
 
 function Controls({ 
@@ -22,8 +25,13 @@ function Controls({
   onRemoveSelectedRow,
   hasSelectedRow,
   onLoadData,
-  onGetData
+  onGetData,
+  onToggleKeyEditable,
+  onToggleValueEditable
 }: ControlsProps) {
+  const [isKeyEditable, setIsKeyEditable] = useState<boolean>(true);
+  const [isValueEditable, setIsValueEditable] = useState<boolean>(true);
+
   const openFile = async () => {
     try {
       const selected = await open({
@@ -93,23 +101,60 @@ function Controls({
     }
   };
 
+  const handleToggleKeyEditable = () => {
+    setIsKeyEditable(prev => !prev);
+    onToggleKeyEditable();
+  };
+
+  const handleToggleValueEditable = () => {
+    setIsValueEditable(prev => !prev);
+    onToggleValueEditable();
+  };
+
   return (
-    <div className={styles.buttons}>
-      <button className={styles.button} onClick={openFile}>Open File</button>
-      <button className={styles.button} onClick={onAddRow}>Add Row</button>
-      {hasSelectedRow && (
-        <button className={styles.button} onClick={onAddNestedRow}>
-          Add Nested Row
+    <div className={styles.controlsContainer}>
+      <div className={styles.buttons}>
+        <button className={styles.button} onClick={openFile}>Open File</button>
+        <button className={styles.button} onClick={onAddRow}>Add Row</button>
+        {hasSelectedRow && (
+          <button className={styles.button} onClick={onAddNestedRow}>
+            Add Nested Row
+          </button>
+        )}
+        <button 
+          className={styles.button} 
+          onClick={hasSelectedRow ? onRemoveSelectedRow : onRemoveRow}
+        >
+          {hasSelectedRow ? 'Remove Selected' : 'Remove Row'}
         </button>
-      )}
-      <button 
-        className={styles.button} 
-        onClick={hasSelectedRow ? onRemoveSelectedRow : onRemoveRow}
-      >
-        {hasSelectedRow ? 'Remove Selected' : 'Remove Row'}
-      </button>
-      <button className={styles.button} onClick={onClearTable}>Clear Table</button>
-      <button className={styles.button} onClick={saveFile}>Save File</button>
+        <button className={styles.button} onClick={onClearTable}>Clear Table</button>
+        <button className={styles.button} onClick={saveFile}>Save File</button>
+      </div>
+      
+      <div className={styles.togglesContainer}>
+        <div className={styles.toggleWrapper}>
+          <label className={styles.toggleLabel}>
+            <span>Key Editable:</span>
+            <div 
+              className={`${styles.toggle} ${isKeyEditable ? styles.toggleOn : styles.toggleOff}`}
+              onClick={handleToggleKeyEditable}
+            >
+              <div className={styles.toggleSlider}></div>
+            </div>
+          </label>
+        </div>
+        <div className={styles.toggleWrapper}>
+          <label className={styles.toggleLabel}>
+            <span>Value Editable:</span>
+            <div 
+              className={`${styles.toggle} ${isValueEditable ? styles.toggleOn : styles.toggleOff}`}
+              onClick={handleToggleValueEditable}
+            >
+              <div className={styles.toggleSlider}></div>
+            </div>
+          </label>
+        </div>
+      </div>
     </div>
   );
 }
