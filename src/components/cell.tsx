@@ -78,45 +78,45 @@ function Cell({
     };
 
     return (
-        <div 
-            className={`${style.content} ${isSelected ? style.selected : ''}`} 
-            onClick={handleContentClick}
-            data-id={id}
-        >
-            <span 
-                ref={nameRef}
+        <>
+        <div className={`${style.content} ${isSelected ? style.selected : ''}`} onClick={handleContentClick} data-id={id}>
+            {isSelected ? <button className={style.deleteButton}>
+                <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg>
+            </button> : ""}
+            <span ref={nameRef}
                 contentEditable={isKeyEditable}
                 className={`${style.key} ${!isKeyEditable ? style.keyNotEditable : ''}`}
                 onKeyDown={handleKeyDown}
                 onBlur={handleNameBlur}
                 suppressContentEditableWarning={true}
-            >
+                data-placeholder={"key"}>
                 {name}
             </span>
             
-            {/* Only show value span if not expandable */}
             {!isExpandable && (
-                <span 
-                    ref={valueRef}
+                <span ref={valueRef}
                     contentEditable={isValueEditable}
                     className={`${style.value} ${!isValueEditable ? style.valueNotEditable : ''}`}
                     onKeyDown={handleKeyDown}
                     onBlur={handleValueBlur}
                     suppressContentEditableWarning={true}
-                >
+                    data-placeholder={"value"}>
                     {val}
                 </span>
             )}
             
             {isExpandable && (
-                <button 
-                    className={style.expandButton}
-                    onClick={handleExpandClick}
-                >
+                <button className={style.expandButton} onClick={handleExpandClick}>
                     {isExpanded ? '−' : '+'}
                 </button>
             )}
         </div>
+        {isSelected ? <div>
+            //add row button
+            </div> : ""}
+        </>
     )
 }
 

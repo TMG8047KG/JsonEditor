@@ -66,26 +66,27 @@ function Editor() {
             Create project
           </button>
         ) : (
+          <>
+         
           <Table 
             ref={tableRef} 
             onSelectionChange={handleSelectionChange}
           />
+          <Controls 
+            onAddRow={handleAddRow} 
+            onRemoveRow={handleRemoveRow} 
+            onClearTable={handleClearTable}
+            onAddNestedRow={handleAddNestedRow}
+            onRemoveSelectedRow={handleRemoveSelectedRow}
+            hasSelectedRow={hasSelectedRow}
+            onLoadData={handleLoadData}
+            onGetData={handleGetData}
+            onToggleKeyEditable={handleToggleKeyEditable}
+            onToggleValueEditable={handleToggleValueEditable}
+          />
+        </>
         )}
       </div>
-      {!projectStarted ? "" : (
-        <Controls 
-          onAddRow={handleAddRow} 
-          onRemoveRow={handleRemoveRow} 
-          onClearTable={handleClearTable}
-          onAddNestedRow={handleAddNestedRow}
-          onRemoveSelectedRow={handleRemoveSelectedRow}
-          hasSelectedRow={hasSelectedRow}
-          onLoadData={handleLoadData}
-          onGetData={handleGetData}
-          onToggleKeyEditable={handleToggleKeyEditable}
-          onToggleValueEditable={handleToggleValueEditable}
-        />
-      )}
     </div>
   )
 }

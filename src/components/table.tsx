@@ -35,7 +35,7 @@ interface TableProps {
 
 const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) => {
     const [rows, setRows] = useState<TableRow[]>([
-        { id: "row-" + Date.now(), key: "key", value: "value", isSelected: false, parentId: null, order: 0 }
+        { id: "row-" + Date.now(), key: "", value: "", isSelected: false, parentId: null, order: 0 }
     ]);
     const [maxOrder, setMaxOrder] = useState<number>(0);
     const [isKeyEditable, setIsKeyEditable] = useState<boolean>(true);

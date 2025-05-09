@@ -14,6 +14,13 @@
     border-right: none;
 }
 
+.key:empty::before {
+    content: attr(data-placeholder);
+    display: block;
+    height: 100%;
+    color: #00000066;
+}
+
 .key:focus{
     outline: none;
 }
@@ -34,6 +41,13 @@
     outline: none;
 }
 
+.value:empty::before {
+    content: attr(data-placeholder);
+    display: block;
+    height: 100%;
+    color: #00000066;
+}
+
 .content{
     display: flex;
     align-items: center;
@@ -50,6 +64,26 @@
 .content.selected .value {
     border-color: #FAD02C;
     box-shadow: 0 0 3px #FAD02C;
+}
+
+.deleteButton {
+    display: flex;
+    margin-right: 5px;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    color: gray;
+}
+
+.deleteButton:hover{
+    background: rgba(128, 128, 128, 0.555);
 }
 
 .expandButton {

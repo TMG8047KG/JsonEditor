@@ -1,28 +1,38 @@
 .button{
-    font-weight: 600;
-    padding: 10px;
-    border: none;
-    background: #FAD02C;
-    border-radius: 10px;
+  font-weight: 600;
+  padding: 10px;
+  border: none;
+  background: #FAD02C;
+  border-radius: 50%;
 }
 
 .buttons{
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    gap:5px;
-    margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap:5px;
 }
 .controlsContainer {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  width: 60px;
+  height: 400px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 10px;
+  background: #ccc;
+  border-radius: 40px;
+  overflow: scroll;
+}
+
+.controlsContainer::-webkit-scrollbar{
+  display: none;
 }
 
 .buttons {
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
 }
 
