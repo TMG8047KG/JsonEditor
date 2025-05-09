@@ -1,11 +1,10 @@
-import { BaseDirectory, documentDir } from '@tauri-apps/api/path';
+import { documentDir } from '@tauri-apps/api/path';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { writeTextFile, readTextFile } from '@tauri-apps/plugin-fs';
 import { useState } from 'react';
 import styles from './styles/controls.module.css';
 
 interface ControlsProps {
-  onAddRow: () => void;
   onRemoveRow: () => void;
   onClearTable: () => void;
   onAddNestedRow: () => void;
@@ -18,7 +17,6 @@ interface ControlsProps {
 }
 
 function Controls({ 
-  onAddRow, 
   onRemoveRow, 
   onClearTable,
   onAddNestedRow,
@@ -115,7 +113,6 @@ function Controls({
     <div className={styles.controlsContainer}>
       <div className={styles.buttons}>
         <button className={styles.button} onClick={openFile}>Open File</button>
-        <button className={styles.button} onClick={onAddRow}>Add Row</button>
         {hasSelectedRow && (
           <button className={styles.button} onClick={onAddNestedRow}>
             Add Nested Row

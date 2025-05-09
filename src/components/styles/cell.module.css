@@ -10,8 +10,7 @@
 }
 
 .content:has(.value) .key {
-    border-radius: 10px 0px 0px 10px;
-    border-right: none;
+    border-radius: 10px;
 }
 
 .key:empty::before {
@@ -28,13 +27,8 @@
 .value{
     font-family: "Tuffy", sans-serif;
     font-weight: 500;
-    background: #E9EAEC;
     padding: 5px 10px;
-    border-radius: 0px 10px 10px 0px;
     min-width: 4rem;
-    border-right: 2px solid black;
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
 }
 
 .value:focus{
@@ -48,26 +42,55 @@
     color: #00000066;
 }
 
+.container{
+    display: grid;
+    grid-template-columns: auto;
+    align-items: center;
+    width: max-content;
+}
+
+.addRowButton{
+    display: none;
+    font-family: "Tuffy", sans-serif;
+    font-weight: 700;
+    background: #707070;
+    padding: 5px 10px;
+    border-radius: 10px;
+    min-width: 4rem;
+    border: 2px solid black;
+    margin-left: 30px;
+    transition: all 0.3s ease;
+}
+
+.row{
+    display: flex;
+    align-items: center;
+}
+
 .content{
     display: flex;
     align-items: center;
     margin: 3px 0;
-    transition: all 0.2s ease;
+    padding: 3px;
+    background: rgb(255, 255, 255);
+    border-radius: 15px;
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
-.content.selected .key {
-    border-color: #FAD02C;
+.content.selected {
+    border: 2px solid #FAD02C;
     box-shadow: 0 0 3px #FAD02C;
+    transition: ease 0.3s;
 }
 
-.content.selected .value {
-    border-color: #FAD02C;
-    box-shadow: 0 0 3px #FAD02C;
+.container:hover .addRowButton,
+.container:hover .deleteButton{
+    display: flex;
 }
 
 .deleteButton {
-    display: flex;
+    display: none;
     margin-right: 5px;
     justify-content: center;
     align-items: center;
@@ -80,6 +103,7 @@
     cursor: pointer;
     font-size: 16px;
     color: gray;
+    transition: ease 0.3s;
 }
 
 .deleteButton:hover{

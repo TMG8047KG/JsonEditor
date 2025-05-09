@@ -1,9 +1,12 @@
 .container{
+    display: grid;
+    grid-template-columns: auto 10%;
     border-radius: 15px;
     box-shadow: black 1px 0px 10px 1px;
     padding: 10px;
     background-color: #333652;
     margin: 10px;
+    overflow: hidden;
 }
 .button{
     background-color: #FAD02C;

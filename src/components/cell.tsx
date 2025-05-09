@@ -12,8 +12,9 @@ interface CellProps {
     onToggleExpand?: () => void;
     onNameChange?: (id: string, value: string) => void;
     onValueChange?: (id: string, value: string) => void;
-    isKeyEditable?: boolean;  // Add prop to control key editing
-    isValueEditable?: boolean;  // Add prop to control value editing
+    isKeyEditable?: boolean;
+    isValueEditable?: boolean;
+    onAddRow?: () => void;
 }
 
 function Cell({ 
@@ -27,8 +28,9 @@ function Cell({
     onToggleExpand,
     onNameChange,
     onValueChange,
-    isKeyEditable = true,  // Default to editable for backward compatibility
-    isValueEditable = true  // Default to editable for backward compatibility
+    isKeyEditable = true,
+    isValueEditable = true,
+    onAddRow
 }: CellProps) {
     
     const nameRef = useRef<HTMLSpanElement>(null);
@@ -70,6 +72,13 @@ function Cell({
         }
     };
 
+    const handleAddRowClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onAddRow) {
+            onAddRow();
+        }
+    };
+
     // Prevent Enter key from creating new lines in contentEditable
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -79,43 +88,45 @@ function Cell({
 
     return (
         <>
-        <div className={`${style.content} ${isSelected ? style.selected : ''}`} onClick={handleContentClick} data-id={id}>
+        <div className={style.container}>
+            <div className={style.row}>
             {isSelected ? <button className={style.deleteButton}>
-                <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6"/>
-                </svg>
-            </button> : ""}
-            <span ref={nameRef}
-                contentEditable={isKeyEditable}
-                className={`${style.key} ${!isKeyEditable ? style.keyNotEditable : ''}`}
-                onKeyDown={handleKeyDown}
-                onBlur={handleNameBlur}
-                suppressContentEditableWarning={true}
-                data-placeholder={"key"}>
-                {name}
-            </span>
-            
-            {!isExpandable && (
-                <span ref={valueRef}
-                    contentEditable={isValueEditable}
-                    className={`${style.value} ${!isValueEditable ? style.valueNotEditable : ''}`}
-                    onKeyDown={handleKeyDown}
-                    onBlur={handleValueBlur}
-                    suppressContentEditableWarning={true}
-                    data-placeholder={"value"}>
-                    {val}
-                </span>
-            )}
-            
-            {isExpandable && (
-                <button className={style.expandButton} onClick={handleExpandClick}>
-                    {isExpanded ? '−' : '+'}
-                </button>
-            )}
-        </div>
-        {isSelected ? <div>
-            //add row button
-            </div> : ""}
+                    <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                    </svg>
+                </button> : ""}
+                <div className={`${style.content} ${isSelected ? style.selected : ''}`} onClick={handleContentClick} data-id={id}>
+                    <span ref={nameRef}
+                        contentEditable={isKeyEditable}
+                        className={`${style.key} ${!isKeyEditable ? style.keyNotEditable : ''}`}
+                        onKeyDown={handleKeyDown}
+                        onBlur={handleNameBlur}
+                        suppressContentEditableWarning={true}
+                        data-placeholder={"key"}>
+                        {name}
+                    </span>
+                    
+                    {!isExpandable && (
+                        <span ref={valueRef}
+                            contentEditable={isValueEditable}
+                            className={`${style.value} ${!isValueEditable ? style.valueNotEditable : ''}`}
+                            onKeyDown={handleKeyDown}
+                            onBlur={handleValueBlur}
+                            suppressContentEditableWarning={true}
+                            data-placeholder={"value"}>
+                            {val}
+                        </span>
+                    )}
+                    
+                    {isExpandable && (
+                        <button className={style.expandButton} onClick={handleExpandClick}>
+                            {isExpanded ? '−' : '+'}
+                        </button>
+                    )}
+                </div>
+                </div>
+                {!isExpandable && isSelected ? <button className={style.addRowButton} onClick={handleAddRowClick}>Add Row</button> : ""}
+            </div>
         </>
     )
 }

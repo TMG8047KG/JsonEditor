@@ -260,58 +260,61 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
         return newRows;
     };
     
+    // Define addRow function that will be passed to Cell and exposed via ref
+    const addRow = () => {
+        setRows(prevRows => {
+            const selectedRow = prevRows.find(row => row.isSelected);
+            let newOrder = 0;
+            let parentId: string | null = null;
+            
+            if (selectedRow) {
+                // Add row as a sibling to the selected row
+                parentId = selectedRow.parentId;
+                
+                // Get siblings of selected row
+                const siblings = prevRows.filter(row => row.parentId === parentId);
+                
+                // Find next siblings (rows that come after the selected row)
+                const nextSiblings = siblings
+                    .filter(row => row.order > selectedRow.order)
+                    .sort((a, b) => a.order - b.order);
+                
+                if (nextSiblings.length > 0) {
+                    // Insert between selected row and next sibling
+                    newOrder = (selectedRow.order + nextSiblings[0].order) / 2;
+                } else {
+                    // Selected row is last in its group, add after it
+                    newOrder = selectedRow.order + 1;
+                }
+            } else {
+                // No row selected, add at the end of top-level rows
+                const topLevelRows = prevRows.filter(row => row.parentId === null);
+                if (topLevelRows.length > 0) {
+                    newOrder = Math.max(...topLevelRows.map(row => row.order)) + 1;
+                }
+            }
+            
+            // Create new row
+            const newRow = { 
+                id: "row-" + Date.now(), 
+                key: "", 
+                value: "", 
+                isSelected: false, 
+                parentId: parentId,
+                order: newOrder
+            };
+            
+            // Add new row to existing rows
+            return [...prevRows, newRow];
+        });
+        
+        // Update max order
+        setMaxOrder(prevMaxOrder => prevMaxOrder + 1);
+    };
+    
     // Expose methods to parent components
     useImperativeHandle(ref, () => ({
-        addRow: () => {
-            setRows(prevRows => {
-                const selectedRow = prevRows.find(row => row.isSelected);
-                let newOrder = 0;
-                let parentId: string | null = null;
-                
-                if (selectedRow) {
-                    // Add row as a sibling to the selected row
-                    parentId = selectedRow.parentId;
-                    
-                    // Get siblings of selected row
-                    const siblings = prevRows.filter(row => row.parentId === parentId);
-                    
-                    // Find next siblings (rows that come after the selected row)
-                    const nextSiblings = siblings
-                        .filter(row => row.order > selectedRow.order)
-                        .sort((a, b) => a.order - b.order);
-                    
-                    if (nextSiblings.length > 0) {
-                        // Insert between selected row and next sibling
-                        newOrder = (selectedRow.order + nextSiblings[0].order) / 2;
-                    } else {
-                        // Selected row is last in its group, add after it
-                        newOrder = selectedRow.order + 1;
-                    }
-                } else {
-                    // No row selected, add at the end of top-level rows
-                    const topLevelRows = prevRows.filter(row => row.parentId === null);
-                    if (topLevelRows.length > 0) {
-                        newOrder = Math.max(...topLevelRows.map(row => row.order)) + 1;
-                    }
-                }
-                
-                // Create new row
-                const newRow = { 
-                    id: "row-" + Date.now(), 
-                    key: "", 
-                    value: "", 
-                    isSelected: false, 
-                    parentId: parentId,
-                    order: newOrder
-                };
-                
-                // Add new row to existing rows
-                return [...prevRows, newRow];
-            });
-            
-            // Update max order
-            setMaxOrder(prevMaxOrder => prevMaxOrder + 1);
-        },
+        addRow,
         updateCellKey: (id: string, value: string) => {
             setRows(prevRows => 
                 prevRows.map(row => 
@@ -520,6 +523,7 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                         }}
                         isKeyEditable={isKeyEditable}
                         isValueEditable={isValueEditable}
+                        onAddRow={addRow} // Pass addRow function to Cell
                     />
                     
                     {/* Render children if expanded and has children */}
@@ -577,11 +581,13 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                     </div>
                 )}
             </div>
-            {rows.length < 1 ? (
-                <div className={style.empty}>There's no objects!</div>
-            ) : (
-                renderRows(null)
-            )}
+            <div className={style.cells}>
+                {rows.length < 1 ? (
+                    <div className={style.empty}>There's no objects!</div>
+                ) : (
+                    renderRows(null)
+                )}
+            </div>
         </div>
     );
 });
