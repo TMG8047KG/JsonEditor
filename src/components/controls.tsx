@@ -5,10 +5,8 @@ import { useState } from 'react';
 import styles from './styles/controls.module.css';
 
 interface ControlsProps {
-  onRemoveRow: () => void;
   onClearTable: () => void;
   onAddNestedRow: () => void;
-  onRemoveSelectedRow: () => void;
   hasSelectedRow: boolean;
   onLoadData: (data: any) => void;
   onGetData: () => any;
@@ -17,10 +15,8 @@ interface ControlsProps {
 }
 
 function Controls({ 
-  onRemoveRow, 
   onClearTable,
   onAddNestedRow,
-  onRemoveSelectedRow,
   hasSelectedRow,
   onLoadData,
   onGetData,
@@ -115,15 +111,9 @@ function Controls({
         <button className={styles.button} onClick={openFile}>Open File</button>
         {hasSelectedRow && (
           <button className={styles.button} onClick={onAddNestedRow}>
-            Add Nested Row
+            Make list
           </button>
         )}
-        <button 
-          className={styles.button} 
-          onClick={hasSelectedRow ? onRemoveSelectedRow : onRemoveRow}
-        >
-          {hasSelectedRow ? 'Remove Selected' : 'Remove Row'}
-        </button>
         <button className={styles.button} onClick={onClearTable}>Clear Table</button>
         <button className={styles.button} onClick={saveFile}>Save File</button>
       </div>

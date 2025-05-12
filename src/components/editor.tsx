@@ -73,10 +73,8 @@ function Editor() {
             onSelectionChange={handleSelectionChange}
           />
           <Controls 
-            onRemoveRow={handleRemoveRow} 
             onClearTable={handleClearTable}
             onAddNestedRow={handleAddNestedRow}
-            onRemoveSelectedRow={handleRemoveSelectedRow}
             hasSelectedRow={hasSelectedRow}
             onLoadData={handleLoadData}
             onGetData={handleGetData}

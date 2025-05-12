@@ -311,6 +311,24 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
         // Update max order
         setMaxOrder(prevMaxOrder => prevMaxOrder + 1);
     };
+
+    // Function to remove the selected row
+    const removeSelectedRow = () => {
+        const selectedRow = getSelectedRow();
+        if (selectedRow) {
+            // Remove the selected row and its children
+            setRows(prevRows => prevRows.filter(row => 
+                row.id !== selectedRow.id && row.parentId !== selectedRow.id
+            ));
+            
+            // Notify parent component about selection change AFTER state update
+            setTimeout(() => {
+                if (onSelectionChange) {
+                    onSelectionChange(false);
+                }
+            }, 0);
+        }
+    };
     
     // Expose methods to parent components
     useImperativeHandle(ref, () => ({
@@ -395,22 +413,7 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                 }
             }
         },
-        removeSelectedRow: () => {
-            const selectedRow = getSelectedRow();
-            if (selectedRow) {
-                // Remove the selected row and its children
-                setRows(prevRows => prevRows.filter(row => 
-                    row.id !== selectedRow.id && row.parentId !== selectedRow.id
-                ));
-                
-                // Notify parent component about selection change AFTER state update
-                setTimeout(() => {
-                    if (onSelectionChange) {
-                        onSelectionChange(false);
-                    }
-                }, 0);
-            }
-        },
+        removeSelectedRow,
         // Methods for file operations
         loadData: (data: any) => {
             // Convert JSON data to rows
@@ -524,6 +527,7 @@ const Table = forwardRef<TableHandle, TableProps>(({ onSelectionChange }, ref) =
                         isKeyEditable={isKeyEditable}
                         isValueEditable={isValueEditable}
                         onAddRow={addRow} // Pass addRow function to Cell
+                        onRemoveRow={removeSelectedRow} // Pass removeSelectedRow function to Cell
                     />
                     
                     {/* Render children if expanded and has children */}

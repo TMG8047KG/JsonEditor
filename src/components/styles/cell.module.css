@@ -2,22 +2,22 @@
     padding: 5px;
     font-family: "Tuffy", sans-serif;
     font-weight: 700;
-    background: #90ADC6;
+    background: #333652;
+    color: #E9EAEC;
     padding: 5px 10px;
-    border-radius: 10px;
+    border-radius: 12px;
     min-width: 3rem;
-    border: 2px solid black;
 }
 
 .content:has(.value) .key {
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 .key:empty::before {
     content: attr(data-placeholder);
     display: block;
     height: 100%;
-    color: #00000066;
+    color: #1a1b22;
 }
 
 .key:focus{
@@ -26,7 +26,7 @@
 
 .value{
     font-family: "Tuffy", sans-serif;
-    font-weight: 500;
+    font-weight: 700;
     padding: 5px 10px;
     min-width: 4rem;
 }
@@ -50,16 +50,18 @@
 }
 
 .addRowButton{
-    display: none;
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
     font-family: "Tuffy", sans-serif;
     font-weight: 700;
+    font-size: 24px;
     background: #707070;
-    padding: 5px 10px;
-    border-radius: 10px;
-    min-width: 4rem;
+    padding: 3px;
+    border-radius: 50%;
     border: 2px solid black;
-    margin-left: 30px;
-    transition: all 0.3s ease;
+    margin-left: 5px;
+    transition: all 0.2s ease;
 }
 
 .row{
@@ -70,28 +72,24 @@
 .content{
     display: flex;
     align-items: center;
-    margin: 3px 0;
-    padding: 3px;
+    margin: 5px 0px 0px 40px;
+    padding: 4px;
     background: rgb(255, 255, 255);
     border-radius: 15px;
-    transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .content.selected {
-    border: 2px solid #FAD02C;
-    box-shadow: 0 0 3px #FAD02C;
-    transition: ease 0.3s;
+    box-shadow: 0 0 3px 2px #FAD02C;
 }
 
-.container:hover .addRowButton,
-.container:hover .deleteButton{
-    display: flex;
-}
+
 
 .deleteButton {
-    display: none;
-    margin-right: 5px;
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    display: flex;
     justify-content: center;
     align-items: center;
     width: 26px;
@@ -110,8 +108,14 @@
     background: rgba(128, 128, 128, 0.555);
 }
 
+.container:hover .deleteButton,
+.container:hover  .addRowButton{
+    visibility: visible;
+    opacity: 100;
+}
+
 .expandButton {
-    margin-left: 5px;
+    margin: 0 5px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -124,6 +128,7 @@
     cursor: pointer;
     font-size: 16px;
 }
+
 .keyNotEditable {
     padding: 5px;
     font-family: "Tuffy", sans-serif;
@@ -132,17 +137,13 @@
     padding: 5px 10px;
     border-radius: 10px;
     min-width: 3rem;
-    border: 2px solid black;
 }
 
 .valueNotEditable {
     font-family: "Tuffy", sans-serif;
-    font-weight: 500;
-    background: #395a9c;
+    font-weight: 700;
+    color: #6e6e6e;
     padding: 5px 10px;
     border-radius: 0px 10px 10px 0px;
     min-width: 4rem;
-    border-right: 2px solid black;
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
 }
