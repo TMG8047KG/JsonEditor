@@ -1,0 +1,129 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modalOverlay.open {
+  opacity: 1;
+}
+
+.modalOverlay.closing {
+  opacity: 0;
+}
+
+.modal {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modalOverlay.open .modal {
+  transform: translateY(0);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+
+.closeButton:hover {
+  color: #333;
+}
+
+.modalContent {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.warningIcon {
+  color: #f59e0b;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.modalMessage {
+  margin: 0;
+  color: #4b5563;
+  flex-grow: 1;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.confirmButton {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.confirmButton:hover {
+  background-color: #2563eb;
+}
+
+.cancelButton {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: #e5e7eb;
+}
+
+/* Modal types */
+.warning .warningIcon {
+  color: #f59e0b;
+}
+
+.error .warningIcon {
+  color: #ef4444;
+}
+
+.info .warningIcon {
+  color: #3b82f6;
+}
